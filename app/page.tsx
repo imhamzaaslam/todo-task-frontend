@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { 
   Plus, 
   Search, 
@@ -134,9 +136,10 @@ export default function Home() {
       setSelectedFile(null);
       setEditingTask(null);
       setIsAddDialogOpen(false);
+      toast.success(editingTask ? 'Task updated successfully!' : 'Task created successfully!');
     } catch (error) {
       console.error('Error saving task:', error);
-      alert('Failed to save task. Please try again.');
+      toast.error('Failed to save task. Please try again.');
     }
   };
 
@@ -156,9 +159,10 @@ export default function Home() {
     try {
       await axios.delete(`${API_BASE_URL}/todos/${taskId}`);
       setTasks(prev => prev.filter(task => task.id !== taskId));
+      toast.success('Task deleted successfully!');
     } catch (error) {
       console.error('Error deleting task:', error);
-      alert('Failed to delete task. Please try again.');
+      toast.error('Failed to delete task. Please try again.');
     }
   };
 
@@ -178,9 +182,10 @@ export default function Home() {
       setTasks(prev => prev.map(t => 
         t.id === taskId ? { ...response.data, created_at: new Date(response.data.created_at) } : t
       ));
+      toast.success(`Task marked as ${newStatus}!`);
     } catch (error) {
       console.error('Error updating task status:', error);
-      alert('Failed to update task status. Please try again.');
+      toast.error('Failed to update task status. Please try again.');
     }
   };
 
@@ -189,7 +194,7 @@ export default function Home() {
     if (file && file.type === 'application/pdf') {
       setSelectedFile(file);
     } else if (file) {
-      alert('Please select a PDF file only.');
+      toast.error('Please select a PDF file only.');
     }
   };
 
@@ -212,6 +217,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-center">
